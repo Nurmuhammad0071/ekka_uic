@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
@@ -26,10 +27,23 @@ class Size(models.Model):
     def __str__(self):
         return self.title
 
+    @staticmethod
+    def __generate_slug(slug):
+        data = string.ascii_lowercase
+        random_data = "".join([data[random.randint(0, len(data) - 1)] for i in range(6)])
+        return slug + random_data
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        if Product.objects.filter(slug=self.slug).exists():
+            self.slug = self.__generate_slug(self.slug)
+        super(Size, self).save(*args, **kwargs)
+
 
 class Color(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='colors')
     title = models.CharField(max_length=255)
+    color = ColorField(default='#FF0000')
     slug = models.SlugField(max_length=255, unique=True)
 
     def __str__(self):

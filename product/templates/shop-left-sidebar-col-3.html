@@ -118,16 +118,20 @@
                     </div>
                     <div class="col-md-6 ec-sort-select">
                         <span class="sort-by">Sort by</span>
-                        <div class="ec-select-inner">
-                            <select name="ec-select" id="ec-select">
-                                <option selected disabled>Position</option>
-                                <option value="1">Relevance</option>
-                                <option value="2">Name, A to Z</option>
-                                <option value="3">Name, Z to A</option>
-                                <option value="4">Price, low to high</option>
-                                <option value="5">Price, high to low</option>
-                            </select>
-                        </div>
+                        <form method="GET" action="{% url 'product' %}">
+                            <div class="ec-select-inner " style="display:flex">
+                                <select name="ec-select" id="ec-select">
+                                    <option selected disabled>Position</option>
+                                    <option value="1">Relevance</option>
+                                    <option value="2">Name, A to Z</option>
+                                    <option value="3">Name, Z to A</option>
+                                    <option value="4">Price, low to high</option>
+                                    <option value="5">Price, high to low</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </form>
+
                     </div>
                 </div>
                 <!-- Shop Top End -->
@@ -145,7 +149,7 @@
 
                                 <div class="ec-product-inner">
                                     <div class="ec-pro-image-outer">
-                                        <div cl ass="ec-pro-image">
+                                        <div class="ec-pro-image">
                                             <a href="product-left-sidebar.html" class="image">
                                                 {% for price in product.prices.all %}
                                                 {% if forloop.first %}
@@ -208,20 +212,20 @@
                                         <!--                                        </div>-->
                                         <!--                                        #}-->
                                         <span class=" ec-price">
-                                                    {% for price in product.prices.all %}
-                                                        {% if forloop > 1 %}
-                                                        {% if forloop.first %}
-                                                            <span class="old-price">{{ price.price }}</span>
-                                                        {% elif forloop.last %}
-                                                            <span class="new-price">{{ price.price }}</span>
+                                                        {% for price in product.prices.all %}
+                                                            {% if forloop > 1 %}
+                                                            {% if forloop.first %}
+                                                                <span class="old-price">{{ price.price }}</span>
+                                                            {% elif forloop.last %}
+                                                                <span class="new-price">{{ price.price }}</span>
+
+                                                            {% endif %}
+                                                        {%else %}
+                                                                <span class="new-price">{{ price.price }}</span>
 
                                                         {% endif %}
-                                                    {%else %}
-                                                            <span class="new-price">{{ price.price }}</span>
-
-                                                    {% endif %}
-                                                    {% endfor %}
-                                                    </span>
+                                                        {% endfor %}
+                                                        </span>
                                         <div class="ec-pro-option">
                                             <div class="ec-pro-color">
                                                 <span class="ec-pro-opt-label">Color</span>
@@ -232,7 +236,7 @@
                                                     <li><a href="#" class="ec-opt-clr-img"
                                                            data-src="{{ price.image.first.image.url }}"
                                                            data-src-hover="{{ price.image.last.image.url }}
-                                                                       data-tooltip=" {{ price.color.title }}"><span
+                                                                           data-tooltip=" {{ price.color.title }}"><span
                                                             style="background-color:{{ price.color.color }};"></span></a>
                                                     </li>
                                                     {% endfor %}
@@ -339,7 +343,7 @@
                                     {% for size in size %}
                                     <li>
                                         <div class="ec-sidebar-block-item">
-                                            <input type="checkbox" value="" ><a href="#">{{ size.title}}</a><span
+                                            <input type="checkbox" value=""><a href="#">{{ size.title}}</a><span
                                                 class="checked"></span>
                                         </div>
                                     </li>
@@ -360,7 +364,7 @@
                                         <div class="ec-sidebar-block-item"><span
                                                 style="background-color:{{ color.color}};"></span></div>
                                     </li>
-                                   {% endfor %}
+                                    {% endfor %}
                                 </ul>
                             </div>
                         </div>
@@ -395,47 +399,47 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    const productListContainer = $('#product-list-container');
+    $(document).ready(function () {
+        const productListContainer = $('#product-list-container');
 
-    // Function to handle AJAX request and update product list
-    function updateProductList() {
-        const selectedCategories = $('.category-checkbox:checked').map(function() {
-            return this.id;
-        }).get();
+        // Function to handle AJAX request and update product list
+        function updateProductList() {
+            const selectedCategories = $('.category-checkbox:checked').map(function () {
+                return this.id;
+            }).get();
 
-        const selectedSizes = $('.size-checkbox:checked').map(function() {
-            return this.value;
-        }).get();
+            const selectedSizes = $('.size-checkbox:checked').map(function () {
+                return this.value;
+            }).get();
 
-        // Make AJAX request
-        $.ajax({
-            url: '/filter-products/',  // URL to your backend endpoint for filtering products
-            method: 'POST',
-            data: {
-                categories: selectedCategories,
-                sizes: selectedSizes
-            },
-            success: function(response) {
-                // Update product list container with the fetched products
-                productListContainer.html(response);
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
+            // Make AJAX request
+            $.ajax({
+                url: '/filter-products/',  // URL to your backend endpoint for filtering products
+                method: 'POST',
+                data: {
+                    categories: selectedCategories,
+                    sizes: selectedSizes
+                },
+                success: function (response) {
+                    // Update product list container with the fetched products
+                    productListContainer.html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        // Event listeners for checkboxes
+        $('.category-checkbox, .size-checkbox').change(function () {
+            updateProductList();
         });
-    }
-
-    // Event listeners for checkboxes
-    $('.category-checkbox, .size-checkbox').change(function() {
-        updateProductList();
     });
-});
 </script>
 
 <!-- Product list container -->
-    <!-- Product list will be dynamically loaded here -->
-    <!-- Include your existing product list HTML here -->
+<!-- Product list will be dynamically loaded here -->
+<!-- Include your existing product list HTML here -->
 </div>
 
 {% endblock %}

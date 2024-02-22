@@ -162,7 +162,8 @@
                     <!-- Ec Header Search Start -->
                     <div class="align-self-center">
                         <div class="header-search">
-                            <form class="ec-btn-group-form" action="#">
+                            <form class="ec-btn-group-form" action="common:search" method="post">
+                                {% csrf_token %}
                                 <input class="form-control ec-search-bar" placeholder="Search products..."
                                        type="text">
                                 <button class="submit" type="submit"><i class="fi-rr-search"></i></button>

@@ -7,3 +7,4 @@ django-tinymce==3.7.1
 pillow==10.2.0
 sqlparse==0.4.4
 typing-extensions==4.9.0
+django-environ
